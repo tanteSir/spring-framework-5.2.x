@@ -353,6 +353,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			parser.parse(candidates);
 			parser.validate();
 
+			// parser.getConfigurationClasses() 里面放了parse时解析的importSelector
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 			configClasses.removeAll(alreadyParsed);
 
@@ -362,10 +363,23 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+
+			/**
+			 * 把扫描出来的 bean对应的 beanDefinitions放入 factory的 map中
+			 *
+			 * 这里需要注意的是，扫描出来的bean当中可能包含了特殊类
+			 * 比如 ImportBeanDefinitionRegistrar也在这个方法里面处理
+			 * 		但并不是包含在configClasses当中
+			 * configClasses中主要包含的是importSelector
+			 * 因为ImportBeanDefinitionRegistrar在扫描出来的时候已经被添加到一个list当中去了
+			 *
+			 * bd到map，除去普通类 普通类->@Component
+			 */
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 
 			candidates.clear();
+			// 由于我们进行了扫描，把扫描出来BD注册给了 Factory
 			if (registry.getBeanDefinitionCount() > candidateNames.length) {
 				String[] newCandidateNames = registry.getBeanDefinitionNames();
 				Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
