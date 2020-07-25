@@ -59,11 +59,13 @@ final class PostProcessorRegistrationDelegate {
 		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
 		Set<String> processedBeans = new HashSet<>();
 
+		// 自定义的BeanFactoryPostProcessors
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 
+			// 循环所有的 BeanDefinitionRegistryPostProcessor
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
 					BeanDefinitionRegistryPostProcessor registryProcessor =
@@ -80,23 +82,49 @@ final class PostProcessorRegistrationDelegate {
 			// uninitialized to let the bean factory post-processors apply to them!
 			// Separate between BeanDefinitionRegistryPostProcessors that implement
 			// PriorityOrdered, Ordered, and the rest.
+			// 这个currentRegistryProcessors 放的是spring内部自己实现了BeanDefinitionRegistryPostProcessor的接口
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+			// getBeanNamesForType 根据bean的类型获取bean的名字
 			String[] postProcessorNames =
 					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+
+			/**
+			 * 这个地方可以得到一个 BeanFactoryPostProcessor， 因为是spring默认在最开始自己注册的
+			 * 为什么要在最开始注册这个呢？
+			 * 		因为spring工厂需要解析扫描等功能，而这些功能是需要在spring工厂初始化之前执行的
+			 * 		要么在工厂最开始的时候，要么在初始化之中，绝对不能在初始化之后
+			 * 		如果在初始化之后，那就没有意义了，那个时候已经需要使用工厂了
+			 * 所以spring在一开始就注册了一个叫 BeanFactoryPostProcessor，用来插手 springFactory的实例化过程
+			 * 在这个地方断点可以知道，这个类叫 ConfigurationClassPostProcessor
+			 * 那么 ConfigurationClassPostProcessor能干嘛呢？
+			 * 		他可以插手 spring工厂实例化过程 非常牛批
+			 */
 			for (String ppName : postProcessorNames) {
+				// 如果这个bean的名字 与 PriorityOrdered排序类相匹配
 				if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+					// 就通过 bean的名字，把 bean拿出来
 					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
 					processedBeans.add(ppName);
 				}
 			}
+
+			// 排序不重要，况且 currentRegistryProcessors这里也只有一个数据
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			// 合并list，不重要(为什么要合并？ 因为还有自己的)
 			registryProcessors.addAll(currentRegistryProcessors);
+
+			// 最重要，注意这里是方法调用，有点难
+			// 执行所有的BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+			// 这个list只是个临时变量，所以要清除，节省空间
 			currentRegistryProcessors.clear();
 
 			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
+			/**
+			 * 判断 postProcessorNames 是否被包含于 processedBeans，即遗漏了后面加载进来的 BeanDefinitionRegistryPostProcessor
+			 */
 			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
 				if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
@@ -128,10 +156,18 @@ final class PostProcessorRegistrationDelegate {
 			}
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			/**
+			 * 执行 BeanFactoryPostProcessor的回调。问题：前面不是吗？
+			 * 前面执行的是 BeanFactoryPostProcessor的子类 -> BeanDefinitionRegistrarPostProcessor的回调
+			 * 这里才是 BeanFactoryPostProcessor的回调
+			 */
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+			// regularPostProcessors 自定义的beanFctoryPostProcessor
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
-
+		/**
+		 * 下面的代码就不重要了，else不会进去，再下面就是一些排序的代码
+		 */
 		else {
 			// Invoke factory processors registered with the context instance.
 			invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
@@ -276,7 +312,9 @@ final class PostProcessorRegistrationDelegate {
 	private static void invokeBeanDefinitionRegistryPostProcessors(
 			Collection<? extends BeanDefinitionRegistryPostProcessor> postProcessors, BeanDefinitionRegistry registry) {
 
+		// 一开始进来只有一条数据
 		for (BeanDefinitionRegistryPostProcessor postProcessor : postProcessors) {
+			// 调用扩展方法 这里是调用 ConfigurationClassPostProcessor的 postProcessBeanDefinitionRegistry方法
 			postProcessor.postProcessBeanDefinitionRegistry(registry);
 		}
 	}

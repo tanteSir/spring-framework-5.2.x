@@ -67,6 +67,15 @@ public class AnnotatedBeanDefinitionReader {
 	 * @see #AnnotatedBeanDefinitionReader(BeanDefinitionRegistry, Environment)
 	 * @see #setEnvironment(Environment)
 	 */
+	/**
+	 * 这里的BeanDefinitionRegistry registry是 AnnotationConfigApplicationContext构造方法传进来的this
+	 * 由此说明AnnotationConfigApplicationContext 是一个 BeabDefinitionRegistry类
+	 *
+	 * GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry
+	 * 看到它实现了BeanDefinitionRegistry 验证了上面的说法，那么 BeanDefinitionRegistry的作用是什么呢？
+	 * 其实就是 BeanDefinition的注册器，所谓注册就是把BeanDefinition put 进最后的map中去  而这最后的 map就是一开始实例化的 DefaultListableBeanFactory中的 map
+	 * @param registry
+	 */
 	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
 		this(registry, getOrCreateEnvironment(registry));
 	}
@@ -84,6 +93,7 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
+		// 条件计算器，根据不同条件生成不同 beanFactory和 环境 environment
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
@@ -250,16 +260,35 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
+		/**
+		 * 根据指定的 Bean 创建一个 AnnotatedGenericBeanDefinition
+		 * 这个AnnotatedGenericBeanDefinition 可以理解为一个数据结构
+		 * 其中包含了类的其他一些元信息 如：scope、lazy等等
+		 */
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
-
+		/**
+		 * 判断这个类是否需要跳过解析
+		 * 通过代码可以指定判断的依据是，类有没有加注释
+		 */
 		abd.setInstanceSupplier(supplier);
+		/**
+		 * 得到类的作用域，并加到数据结构中
+		 */
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
+		/**
+		 * 通过BeanNameGenerator 生成bean的名字，之前做过这个练习
+		 */
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
+		/**
+		 * 处理类中通用注解
+		 * 分析源码可以知道它主要处理 Lazy、DependsOn、Primary、Role等注解
+		 * 处理完成之后 processCommonDefinitionAnnotations 中依旧是把他添加到数据结构中
+		 */
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
