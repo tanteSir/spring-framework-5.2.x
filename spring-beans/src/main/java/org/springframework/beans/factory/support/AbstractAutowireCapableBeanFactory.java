@@ -495,6 +495,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Prepare method overrides.
+		// 处理 lookup-method 和 replace-method, Spring将这两个配置统称为 method overrides.
 		try {
 			mbdToUse.prepareMethodOverrides();
 		}
@@ -505,6 +506,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			/**
+			 * 在 bean初始化前应用后置处理，如果后置处理返回的 bean不为空，则直接返回
+			 * 这个类需要通过代码演示，实现 InstantiationAwareBeanPostProcessor接口，作用是 不做 bean依赖填充和自动装配，直接返回
+			 * spring不提倡程序员使用这个接口
+			 * Give BeanPostProcessors a chance to return a proxy instead of zhe ...
+			 */
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -516,7 +523,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
-			// 真正的代理逻辑在这个 doCreateBean中
+			// 真正的代理逻辑在 调用 doCreateBean 创建bean
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Finished creating instance of bean '" + beanName + "'");
@@ -558,6 +565,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			/**
+			 * 创建 bean实例，并将实例包装 BeanWrapper实现类对象中返回
+			 * createBeanInstance中包含三种创建 bean实例的方式：
+			 * 		1、通过工厂方法创建 bean实例
+			 * 		2、通过构造方法自动注入(autowire by constructor)的方式创建 bean实例
+			 * 		3、通过无参构造方法创建 bean实例
+			 *
+			 * 若 bean的配置信息配置了 lookuo-method 和 replcace-method, 则会自动增强 bean实例。
+			 */
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		// getWrappedInstance() 拿到原生对象
@@ -596,9 +612,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// 赋值属性，是写怎么完成自动装配的
+			// 设置属性，非常重要，是写怎么完成自动装配的
 			populateBean(beanName, mbd, instanceWrapper);
-			// AOP就是通过原生对象变成代理对象，这里完成的代理
+			// 执行后置处理器，AOP就是在这里完成代理，将原生对象变成代理对象
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -1170,6 +1186,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Make sure bean class is actually resolved at this point.
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
 
+		/**
+		 * 检测一个类的访问权限，spring默认情况下对于非 public的类是允许访问的
+		 */
 		if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
 			throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
@@ -1180,44 +1199,63 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return obtainFromSupplier(instanceSupplier, beanName);
 		}
 
+		/**
+		 * 如果工厂方法不为空，则通过工厂方法创建 bean对象，工厂方法可以用xml配置 配合 staic方法
+		 * 这种构建 beand的方式可以自己写个 demo试试
+		 */
 		if (mbd.getFactoryMethodName() != null) {
 			return instantiateUsingFactoryMethod(beanName, mbd, args);
 		}
 
-		// Shortcut when re-creating the same bean...
+		// Shortcut when re-creating the same bean...	Shortcut：快捷方式
+		/**
+		 * 从 Springd的原始注释可以知道这是一个 Shortcut，这是什么意思?
+		 * 当多次构建同一个 bean时，可以使用这个 Shortcut
+		 * 也就是说不再需要去推断应该使用哪种方式构造bean
+		 * 		比如在多次构建同一个 prototype类型的 bean时，就可以走此处的 Shortcut
+		 * 这里的 resolved和 mdb.constructorArgumentsResolved 将会在 bean第一次实例化d的过程中被设置
+		 */
 		boolean resolved = false;
 		boolean autowireNecessary = false;
 		if (args == null) {
 			synchronized (mbd.constructorArgumentLock) {
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
 					resolved = true;
+					// 如果解析了构造方法的参数，则必须要通过一个带参构造方法来实例
 					autowireNecessary = mbd.constructorArgumentsResolved;
 				}
 			}
 		}
 		if (resolved) {
 			if (autowireNecessary) {
+				// 通过构造方法自动装配的方式构造 bean对象
 				return autowireConstructor(beanName, mbd, null, null);
 			}
 			else {
+				// 通过默认的无参构造方法进行
 				return instantiateBean(beanName, mbd);
 			}
 		}
 
 		// Candidate constructors for autowiring?
+		// 由后置处理器决定返回哪些构造方法
+		// 如果用的是默认构造方法，spring则认为没有构造方法 ，这里会是 null
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
+			// 使用有参构造方法进行初始化
 			return autowireConstructor(beanName, mbd, ctors, args);
 		}
 
 		// Preferred constructors for default construction?
 		ctors = mbd.getPreferredConstructors();
 		if (ctors != null) {
+			// 使用有参构造方法进行初始化
 			return autowireConstructor(beanName, mbd, ctors, null);
 		}
 
 		// No special handling: simply use no-arg constructor.
+		// 使用默认无参构造方法进行初始化
 		return instantiateBean(beanName, mbd);
 	}
 
@@ -1316,6 +1354,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						getAccessControlContext());
 			}
 			else {
+				/**
+				 * getInstantiationStrategy 得到类的实例化策略
+				 * 默认情况下是得到一个反射d的实例化策略
+				 */
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
 			}
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
@@ -1792,11 +1834,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
-			// 在初始化之前执行所有 BeanPostProcessor
+			// 执行后置处理器的 before，在初始化之前执行所有 BeanPostProcessor
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
 		try {
+			// 执行 bean的生命周期回调中的 init方法
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		}
 		catch (Throwable ex) {
@@ -1805,7 +1848,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					beanName, "Invocation of init method failed", ex);
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
-			// 执行这个后变代理对象
+			// 执行后置处理器的 after方法，执行这个后变代理对象
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 
