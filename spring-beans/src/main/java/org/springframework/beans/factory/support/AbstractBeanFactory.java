@@ -282,7 +282,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 			}
 			/**
-			 * 如果 shareInstance是普通的d单例 bean，下面方法就会直接返回
+			 * 如果 shareInstance是普通的单例 bean，下面方法就会直接返回
 			 * 但如果是 FactoryBean类型的，则需要调用 getObject工厂方法
 			 * bean实例。如果用户想获取 FactoryBean本身，这里也不会做特别的处理
 			 * 毕竟 FactoryBean的实现类本身也是一种 Bean,只不过具有一点特性

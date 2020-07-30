@@ -1,7 +1,7 @@
-package spring.annotation;
+package com.spring.annotation;
 
+import com.spring.imports.MyImportSelector;
 import org.springframework.context.annotation.Import;
-import spring.imports.MyImportSelector;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

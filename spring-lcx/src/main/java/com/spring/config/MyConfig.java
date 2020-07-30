@@ -1,10 +1,9 @@
-package spring.config;
+package com.spring.config;
 
 import com.lcx.dao.impl.IndexDaoImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * @ClassName : MyConfig
@@ -12,7 +11,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @Author : Lin.cx
  * @Date: 2020-06-21 16:26
  */
-@ComponentScan("com.lcx")
+@ComponentScan("com")
 /**
  * @Configuration这个注解的目的：
  * 为spring中的MyConfig创建cglib动态代理类

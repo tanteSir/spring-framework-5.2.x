@@ -1,8 +1,8 @@
-package spring.imports;
+package com.spring.imports;
 
+import com.spring.aop.AopDemo;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
-import spring.aop.AopDemo;
 
 import java.util.function.Predicate;
 

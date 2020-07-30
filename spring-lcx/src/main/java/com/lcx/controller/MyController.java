@@ -1,8 +1,9 @@
 package com.lcx.controller;
 
 import com.lcx.service.IndexService;
+import com.lcx.service.impl.IndexServiceImpl;
+import com.spring.config.MyConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import spring.config.MyConfig;
 
 /**
  * @ClassName : MyController
@@ -22,7 +23,7 @@ public class MyController {
 		//annotationConfigApplicationContext.addBeanFactoryPostProcessor(new MyBeanFactoryProcessor());
 		// 初始化spring环境
 		annotationConfigApplicationContext.refresh();
-		IndexService indexService = (IndexService) annotationConfigApplicationContext.getBean("indexService");
+		IndexService indexService = (IndexService) annotationConfigApplicationContext.getBean(IndexServiceImpl.class);
 		indexService.print();
 
 

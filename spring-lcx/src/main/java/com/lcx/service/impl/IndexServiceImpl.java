@@ -14,6 +14,12 @@ import javax.annotation.PostConstruct;
 @Service("indexService")
 public class IndexServiceImpl implements IndexService {
 
+	Class clazz;
+
+	public IndexServiceImpl(Class clazz){
+		this.clazz = clazz;
+	}
+
 	@PostConstruct
 	public void init(){
 		System.out.println("Hello Spring!");
@@ -21,6 +27,6 @@ public class IndexServiceImpl implements IndexService {
 
 	@Override
 	public void print() {
-		System.out.println("打印方法");
+		System.out.println(this.clazz);
 	}
 }

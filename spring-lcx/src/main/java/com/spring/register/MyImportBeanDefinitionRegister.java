@@ -1,4 +1,4 @@
-package spring.register;
+package com.spring.register;
 
 import com.lcx.service.IndexService;
 import org.springframework.beans.factory.FactoryBean;

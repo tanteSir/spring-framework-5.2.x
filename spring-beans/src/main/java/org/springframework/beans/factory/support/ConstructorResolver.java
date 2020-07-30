@@ -141,7 +141,7 @@ class ConstructorResolver {
 		Object[] argsToUse = null;
 		/**
 		 * 确定参数值列表
-		 * argsToUsek可以有两种办法设置
+		 * argsToUse可以有两种办法设置
 		 * 	1、通过 bd设置
 		 * 	2、通过xml设置
 		 */

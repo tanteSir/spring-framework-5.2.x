@@ -1,11 +1,11 @@
-package spring.aop;
+package com.spring.aop;
 
 import com.lcx.dao.IndexDao;
+import com.spring.handler.MyInvocationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.cglib.proxy.Proxy;
 import org.springframework.stereotype.Component;
-import spring.handler.MyInvocationHandler;
 
 
 /**

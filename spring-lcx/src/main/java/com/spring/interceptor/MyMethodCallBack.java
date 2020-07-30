@@ -1,4 +1,4 @@
-package spring.interceptor;
+package com.spring.interceptor;
 
 
 import org.springframework.cglib.proxy.MethodInterceptor;
