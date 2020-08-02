@@ -23,8 +23,8 @@ public class MyController {
 		//annotationConfigApplicationContext.addBeanFactoryPostProcessor(new MyBeanFactoryProcessor());
 		// 初始化spring环境
 		annotationConfigApplicationContext.refresh();
-		IndexService indexService = (IndexService) annotationConfigApplicationContext.getBean(IndexServiceImpl.class);
-		indexService.print();
+		//IndexService indexService = (IndexService) annotationConfigApplicationContext.getBean("indexService");
+		//indexService.print();
 
 
 		/**

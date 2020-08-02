@@ -75,12 +75,15 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 
 	/** Cache of singleton objects: bean name to bean instance. */
+	// 用于存放完全初始化好的 bean，从该缓存中取出的 bean可以直接使用
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/** Cache of singleton factories: bean name to ObjectFactory. */
+	// 存放 bean工厂对象解决循环依赖
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/** Cache of early singleton objects: bean name to bean instance. */
+	// 存放原始的 bean对象用于解决循环依赖，注意：里面的对象都还没有填充属性
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
 	/** Set of registered singletons, containing the bean names in registration order. */
@@ -153,7 +156,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
+
 		synchronized (this.singletonObjects) {
+			// 判断是否实例化完成
 			if (!this.singletonObjects.containsKey(beanName)) {
 				this.singletonFactories.put(beanName, singletonFactory);
 				this.earlySingletonObjects.remove(beanName);
@@ -181,6 +186,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		// 从 map中获取 bean，如果不为空直接返回，不再进行初始化工作
 		// 讲道理程序猿提供的对象，这里一般是空的
 		Object singletonObject = this.singletonObjects.get(beanName);
+		/**
+		 * 第一次进来时，isSingletonCurrentlyInCreation 肯定为空，不成立所以会跳过
+		 * 但有循环依赖问题而进来时，bean已经在创建中了，所以这个肯定为 true，就会进来
+		 * 		然后从 factories这个工厂类里获取循环依赖所需要填充的 bean
+		 */
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
 				singletonObject = this.earlySingletonObjects.get(beanName);
@@ -253,6 +263,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+					/**
+					 * 去掉正在创建的表示
+					 */
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {

@@ -293,6 +293,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 		}
 
 		// Quick check on the concurrent map first, with minimal locking.
+		// 从缓存中获取
 		Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
 		if (candidateConstructors == null) {
 			// Fully synchronized resolution now...
@@ -309,11 +310,16 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								"] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
 					}
 					List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
+					// 必要的构造器
 					Constructor<?> requiredConstructor = null;
+					// 默认的构造器
 					Constructor<?> defaultConstructor = null;
+					// kotlin技术实现的
 					Constructor<?> primaryConstructor = BeanUtils.findPrimaryConstructor(beanClass);
+					// 可用的不混合构造器
 					int nonSyntheticConstructors = 0;
 					for (Constructor<?> candidate : rawCandidates) {
+						// 判断这个构造器是不是混合类
 						if (!candidate.isSynthetic()) {
 							nonSyntheticConstructors++;
 						}
@@ -396,6 +402,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
 		try {
+			// 依赖注入
 			metadata.inject(bean, beanName, pvs);
 		}
 		catch (BeanCreationException ex) {
@@ -637,6 +644,16 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				Assert.state(beanFactory != null, "No BeanFactory available");
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
 				try {
+					/**
+					 * 完成依赖对象的注入，重要
+					 * 这里又去 getBean(依赖的对象)
+					 * 如果不存在则会创建，存在则获取
+					 *
+					 * 假设原对象为 A，依赖的对象为 B，然后 B又依赖 A
+					 * 这里是 getBean(B)，并且两者都给 spring赋值一个属性————正在创建中，并且放到 factories的 factory中
+					 * B再获取 A的时候，会先判断 A是否正在创建中，如果是的话，就从 factories中 getBean(A)
+					 * 此时得到 A后，注入到 B中，B完成创建，再把 B返给 A，A完成创建
+					 */
 					value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 				}
 				catch (BeansException ex) {
@@ -649,6 +666,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 							registerDependentBeans(beanName, autowiredBeanNames);
 							if (autowiredBeanNames.size() == 1) {
 								String autowiredBeanName = autowiredBeanNames.iterator().next();
+								// 验证匹配类型
 								if (beanFactory.containsBean(autowiredBeanName) &&
 										beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {
 									this.cachedFieldValue = new ShortcutDependencyDescriptor(

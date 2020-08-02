@@ -1,0 +1,34 @@
+第一次 执行InstantiationAwareBeanPostProcessor 的postProcessBeforeInstantiation{
+
+cityService  -------------------BeanPostProcessor---------------postProcessAfterInitialization(aop){
+
+	}
+}
+
+作用：	执行InstantiationAwareBeanPostProcessor 的postProcessBeforeInstantiation
+	判断 bean在实例化之前要不要产生一些新的对象，这个方法可以返回任意类型，
+	如果返回空，spring就会往后面进行；如果返回别的类型，spring就不会进行后面逻辑，只会进行 父类 BeanPostProcessor的 postProcessAfterInitialization
+	经典应用场景：spring 判断 AOP要不要增强，如果不需要增强就会放入一个 map中，后续进行增强操作时就会忽略这个 map的对象
+
+
+	在bean没有开始实例化之前执行
+第二次 determineConstructorsFromBeanPostProcessors---SmartInstantiationAwareBeanPostProcessor--determineCandidateConstructors
+	推断构造方法
+第三次 applyMergedBeanDefinitionPostProcessors---MergedBeanDefinitionPostProcessor---postProcessMergedBeanDefinition  
+	缓存注解信息
+
+第四次 addSingletonFactory ---SmartInstantiationAwareBeanPostProcessor---getEarlyBeanReference
+	得到一个体现暴露的对象----对象不是bean（在spring容器当中，并且由sping自己产生的）
+第五次 populateBean-----InstantiationAwareBeanPostProcessor--postProcessAfterInstantiation
+	判断你的bean需不需要完成属性填充
+
+
+第六次 populateBean-------- InstantiationAwareBeanPostProcessor---postProcessPropertyValues
+	属性填充---自动注入
+
+第七次----BeanPostProcessor----postProcessBeforeInitialization
+
+			postProcessAfterInitialization
+
+
+9-----------destory

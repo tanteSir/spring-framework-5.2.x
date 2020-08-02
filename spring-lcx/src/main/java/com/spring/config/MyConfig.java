@@ -4,6 +4,7 @@ import com.lcx.dao.impl.IndexDaoImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
  * @ClassName : MyConfig
@@ -25,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 // @AopEnable
 // 加上这个可以进行AOP代理
 // 作用：往spring的后置处理器中添加一个处理器，能够处理 spring bean使原生对象变成代理对象
-// @EnableAspectJAutoProxy
+//@EnableAspectJAutoProxy
 public class MyConfig {
 
 	/**
