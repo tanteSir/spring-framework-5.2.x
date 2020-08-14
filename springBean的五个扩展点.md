@@ -11,7 +11,7 @@
 ##### 2、BeanFactoryPostProcessor
 
 ```
-	springBean被容器重任意一个bean被实例化之前来回调它的方法，针对beanFactory来建设
+	springBean被容器中任意一个bean被实例化之前来回调它的方法，针对beanFactory来建设
 	
 	经典场景：ConfigurationClassPostProcessor #postProcessBeanFactory 针对配置类加上 cglib代理
 ```
