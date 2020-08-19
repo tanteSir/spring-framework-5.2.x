@@ -173,6 +173,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
+						// 解析默认命名空间
 						parseDefaultElement(ele, delegate);
 					}
 					else {
@@ -182,6 +183,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			}
 		}
 		else {
+			// 解析自定义命名空间
 			delegate.parseCustomElement(root);
 		}
 	}

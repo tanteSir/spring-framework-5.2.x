@@ -1,9 +1,12 @@
 package com.lcx.controller;
 
+import com.lcx.dao.IndexDao;
 import com.lcx.service.IndexService;
 import com.lcx.service.impl.IndexServiceImpl;
+import com.spring.aop.AopDemo;
 import com.spring.config.MyConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Import;
 
 /**
  * @ClassName : MyController
@@ -11,6 +14,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @Author : Lin.cx
  * @Date: 2020-06-21 16:27
  */
+@Import(AopDemo.class)
 public class MyController {
 
 	public static void main(String[] args) {
@@ -23,8 +27,8 @@ public class MyController {
 		//annotationConfigApplicationContext.addBeanFactoryPostProcessor(new MyBeanFactoryProcessor());
 		// 初始化spring环境
 		annotationConfigApplicationContext.refresh();
-		//IndexService indexService = (IndexService) annotationConfigApplicationContext.getBean("indexService");
-		//indexService.print();
+		IndexService indexService = (IndexService) annotationConfigApplicationContext.getBean("indexService");
+		indexService.print();
 
 
 		/**

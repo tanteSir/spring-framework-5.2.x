@@ -1,6 +1,7 @@
 package com.spring.aop;
 
 import com.lcx.dao.IndexDao;
+import com.lcx.service.IndexService;
 import com.spring.handler.MyInvocationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -14,14 +15,13 @@ import org.springframework.stereotype.Component;
  * @Author : Lin.cx
  * @Date: 2020-07-05 20:04
  */
-@Component
 public class AopDemo implements BeanPostProcessor {
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		System.out.println("AopDemo => postProcessBeforeInitialization :"+beanName);
-		if (beanName.equals("indexDao")){
-			bean = Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{IndexDao.class}, new MyInvocationHandler(bean));
+		if (beanName.equals("indexService")){
+			bean = Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{IndexService.class}, new MyInvocationHandler(bean));
 		}
 		return bean;
 	}
