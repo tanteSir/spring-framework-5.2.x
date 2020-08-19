@@ -1,32 +1,32 @@
-µÚÒ»´Î Ö´ĞĞInstantiationAwareBeanPostProcessor µÄpostProcessBeforeInstantiation{
+ç¬¬ä¸€æ¬¡ æ‰§è¡ŒInstantiationAwareBeanPostProcessor çš„postProcessBeforeInstantiation{
 
 cityService  -------------------BeanPostProcessor---------------postProcessAfterInitialization(aop){
 
 	}
 }
 
-×÷ÓÃ£º	Ö´ĞĞInstantiationAwareBeanPostProcessor µÄpostProcessBeforeInstantiation
-	ÅĞ¶Ï beanÔÚÊµÀı»¯Ö®Ç°Òª²»Òª²úÉúÒ»Ğ©ĞÂµÄ¶ÔÏó£¬Õâ¸ö·½·¨¿ÉÒÔ·µ»ØÈÎÒâÀàĞÍ£¬
-	Èç¹û·µ»Ø¿Õ£¬spring¾Í»áÍùºóÃæ½øĞĞ£»Èç¹û·µ»Ø±ğµÄÀàĞÍ£¬spring¾Í²»»á½øĞĞºóÃæÂß¼­£¬Ö»»á½øĞĞ ¸¸Àà BeanPostProcessorµÄ postProcessAfterInitialization
-	¾­µäÓ¦ÓÃ³¡¾°£ºspring ÅĞ¶Ï AOPÒª²»ÒªÔöÇ¿£¬Èç¹û²»ĞèÒªÔöÇ¿¾Í»á·ÅÈëÒ»¸ö mapÖĞ£¬ºóĞø½øĞĞÔöÇ¿²Ù×÷Ê±¾Í»áºöÂÔÕâ¸ö mapµÄ¶ÔÏó
+ä½œç”¨ï¼š	æ‰§è¡ŒInstantiationAwareBeanPostProcessor çš„postProcessBeforeInstantiation
+	åˆ¤æ–­ beanåœ¨å®ä¾‹åŒ–ä¹‹å‰è¦ä¸è¦äº§ç”Ÿä¸€äº›æ–°çš„å¯¹è±¡ï¼Œè¿™ä¸ªæ–¹æ³•å¯ä»¥è¿”å›ä»»æ„ç±»å‹ï¼Œ
+	å¦‚æœè¿”å›ç©ºï¼Œspringå°±ä¼šå¾€åé¢è¿›è¡Œï¼›å¦‚æœè¿”å›åˆ«çš„ç±»å‹ï¼Œspringå°±ä¸ä¼šè¿›è¡Œåé¢é€»è¾‘ï¼Œåªä¼šè¿›è¡Œ çˆ¶ç±» BeanPostProcessorçš„ postProcessAfterInitialization
+	ç»å…¸åº”ç”¨åœºæ™¯ï¼šspring åˆ¤æ–­ AOPè¦ä¸è¦å¢å¼ºï¼Œå¦‚æœä¸éœ€è¦å¢å¼ºå°±ä¼šæ”¾å…¥ä¸€ä¸ª mapä¸­ï¼Œåç»­è¿›è¡Œå¢å¼ºæ“ä½œæ—¶å°±ä¼šå¿½ç•¥è¿™ä¸ª mapçš„å¯¹è±¡
 
 
-	ÔÚbeanÃ»ÓĞ¿ªÊ¼ÊµÀı»¯Ö®Ç°Ö´ĞĞ
-µÚ¶ş´Î determineConstructorsFromBeanPostProcessors---SmartInstantiationAwareBeanPostProcessor--determineCandidateConstructors
-	ÍÆ¶Ï¹¹Ôì·½·¨
-µÚÈı´Î applyMergedBeanDefinitionPostProcessors---MergedBeanDefinitionPostProcessor---postProcessMergedBeanDefinition  
-	»º´æ×¢½âĞÅÏ¢
+	åœ¨beanæ²¡æœ‰å¼€å§‹å®ä¾‹åŒ–ä¹‹å‰æ‰§è¡Œ
+ç¬¬äºŒæ¬¡ determineConstructorsFromBeanPostProcessors---SmartInstantiationAwareBeanPostProcessor--determineCandidateConstructors
+	æ¨æ–­æ„é€ æ–¹æ³•
+ç¬¬ä¸‰æ¬¡ applyMergedBeanDefinitionPostProcessors---MergedBeanDefinitionPostProcessor---postProcessMergedBeanDefinition  
+	ç¼“å­˜æ³¨è§£ä¿¡æ¯
 
-µÚËÄ´Î addSingletonFactory ---SmartInstantiationAwareBeanPostProcessor---getEarlyBeanReference
-	µÃµ½Ò»¸öÌåÏÖ±©Â¶µÄ¶ÔÏó----¶ÔÏó²»ÊÇbean£¨ÔÚspringÈİÆ÷µ±ÖĞ£¬²¢ÇÒÓÉsping×Ô¼º²úÉúµÄ£©
-µÚÎå´Î populateBean-----InstantiationAwareBeanPostProcessor--postProcessAfterInstantiation
-	ÅĞ¶ÏÄãµÄbeanĞè²»ĞèÒªÍê³ÉÊôĞÔÌî³ä
+ç¬¬å››æ¬¡ addSingletonFactory ---SmartInstantiationAwareBeanPostProcessor---getEarlyBeanReference
+	å¾—åˆ°ä¸€ä¸ªæå‰æš´éœ²çš„å¯¹è±¡----å¯¹è±¡ä¸æ˜¯beanï¼ˆåœ¨springå®¹å™¨å½“ä¸­ï¼Œå¹¶ä¸”ç”±springè‡ªå·±äº§ç”Ÿçš„ï¼‰
+ç¬¬äº”æ¬¡ populateBean-----InstantiationAwareBeanPostProcessor--postProcessAfterInstantiation
+	åˆ¤æ–­ä½ çš„beanéœ€ä¸éœ€è¦å®Œæˆå±æ€§å¡«å……
 
 
-µÚÁù´Î populateBean-------- InstantiationAwareBeanPostProcessor---postProcessPropertyValues
-	ÊôĞÔÌî³ä---×Ô¶¯×¢Èë
+ç¬¬å…­æ¬¡ populateBean-------- InstantiationAwareBeanPostProcessor---postProcessPropertyValues
+	å±æ€§å¡«å……---è‡ªåŠ¨æ³¨å…¥
 
-µÚÆß´Î----BeanPostProcessor----postProcessBeforeInitialization
+ç¬¬ä¸ƒæ¬¡----BeanPostProcessor----postProcessBeforeInitialization
 
 			postProcessAfterInitialization
 

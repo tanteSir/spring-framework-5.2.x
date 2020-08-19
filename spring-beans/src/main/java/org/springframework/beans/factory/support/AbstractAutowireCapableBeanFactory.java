@@ -1231,7 +1231,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		/**
 		 * 如果工厂方法不为空，则通过工厂方法创建 bean对象，工厂方法可以用xml配置 配合 staic方法
-		 * 这种构建 beand的方式可以自己写个 demo试试
+		 * 这种构建 bean的方式可以自己写个 demo试试
 		 */
 		if (mbd.getFactoryMethodName() != null) {
 			return instantiateUsingFactoryMethod(beanName, mbd, args);
@@ -1239,7 +1239,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Shortcut when re-creating the same bean...	Shortcut：快捷方式
 		/**
-		 * 从 Springd的原始注释可以知道这是一个 Shortcut，这是什么意思?
+		 * 从 Spring的原始注释可以知道这是一个 Shortcut，这是什么意思?
 		 * 当多次构建同一个 bean时，可以使用这个 Shortcut
 		 * 也就是说不再需要去推断应该使用哪种方式构造bean
 		 * 		比如在多次构建同一个 prototype类型的 bean时，就可以走此处的 Shortcut
@@ -1516,7 +1516,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			 */
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
-					// 这里有三个后置处理器，其中第三个 AutowiredAnnotationBeanPostProcesso完成包装对象的依赖注入
+					// 这里有7个后置处理器，其中 AutowiredAnnotationBeanPostProcessor完成包装对象的依赖注入
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
 					if (pvsToUse == null) {

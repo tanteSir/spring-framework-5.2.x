@@ -541,7 +541,6 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// 允许上下文子类 对beanFactory进行后置处理
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context.
 				/**
 				 * Invoke factory processors registered as beans in the context.
 				 * 在spring环境中去执行已被注册的factory processors
@@ -552,7 +551,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// 到这里，Bean工厂差不多学完了
 
 				// Register bean processors that intercept bean creation.
-				// 注册bean的拦截器
+				// 注册 BeanPostProcessors。 目的：从上千个后置处理器中选出需要的，注册进list，执行它们
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -752,6 +751,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		 * 		这个list是在 AnnotationConfigApplicationContext 中被定义的
 		 *
 		 * 所谓的自定义，就是你手动调用 AnnotationConfigApplicationContext.addBeanFactoryPostProcessor(xxx)
+		 *
+		 * 里面是执行 BeanFactoryPostProcessors，插手 beanFactory的实例化
 		 */
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 

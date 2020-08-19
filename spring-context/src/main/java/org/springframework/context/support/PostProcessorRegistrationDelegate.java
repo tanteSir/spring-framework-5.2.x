@@ -138,6 +138,7 @@ final class PostProcessorRegistrationDelegate {
 			currentRegistryProcessors.clear();
 
 			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+			// 最后，调用所有其他BeanDefinitionRegistryPostProcessor，直到不再出现其他处理器为止。
 			boolean reiterate = true;
 			while (reiterate) {
 				reiterate = false;

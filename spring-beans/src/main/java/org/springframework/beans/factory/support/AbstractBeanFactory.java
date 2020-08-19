@@ -246,7 +246,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// 处理 &符号
 		/**
 		 * 通过 name获取 beanName。这里不使用 name直接作为 beanName有两个原因：
-		 * 1、name可能会以 &字符开头，表明调用者想h获取 FactoryBean本身，而非实现类所创建的 bean。
+		 * 1、name可能会以 &字符开头，表明调用者想获取 FactoryBean本身，而非实现类所创建的 bean。
 		 *   在 BeanFactory中，FactoryBean的实现类和其他的方式是一致的，即<beanName,bean>, beanName中是没有 &这个字符的
 		 *   将 name首字符 &移除，这样才能从缓存中获取 FactoryBean实例
 		 * 2、还是别名的问题，转换需要

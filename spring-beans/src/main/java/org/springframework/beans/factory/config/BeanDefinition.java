@@ -350,6 +350,8 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	 * <p>Allows for retrieving the decorated bean definition, if any.
 	 * <p>Note that this method returns the immediate originator. Iterate through the
 	 * originator chain to find the original BeanDefinition as defined by the user.
+	 *
+	 * 返回原始 BeanDefinition，如果没有，则返回 null
 	 */
 	@Nullable
 	BeanDefinition getOriginatingBeanDefinition();
