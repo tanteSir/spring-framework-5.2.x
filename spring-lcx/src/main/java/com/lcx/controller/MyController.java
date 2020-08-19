@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
  * @Author : Lin.cx
  * @Date: 2020-06-21 16:27
  */
-@Import(AopDemo.class)
 public class MyController {
 
 	public static void main(String[] args) {
